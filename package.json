@@ -39,7 +39,7 @@
     "typescript": "^4.4.0-beta"
   },
   "dependencies": {
-    "@detachhead/ts-helpers": "8.1.2-ed4eeb021944556e05bec24ff3e8da42032a01ca",
+    "@detachhead/ts-helpers": "8.1.2-3bfe9bf6557cfad21438dc32db5f6df2fd59afe2",
     "@types/json-schema": "^7.0.9"
   }
 }
