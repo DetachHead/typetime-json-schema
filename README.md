@@ -1,3 +1,27 @@
-# typescript-nodejs-project
+# typetime-json-schema
 
-this is a template project. if you don't remove this message you are lazy
+a typescript utility type that evaluates a json schema into a type at compiletime (no code generation! :o)
+
+```ts
+type Foo = FromJsonSchema<{
+    type: 'object'
+    properties: {
+        foo: {
+            type: 'object'
+            properties: {
+                asdf: {
+                    type: 'string'
+                }
+            }
+        }
+        bar: {
+            type: 'array'
+            items: {
+                type: 'string'
+            }
+        }
+    }
+}>
+//type Foo is {foo: {asdf: string}, bar: string[]}
+const value: Foo = {}
+```

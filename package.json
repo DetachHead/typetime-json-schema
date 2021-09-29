@@ -1,5 +1,5 @@
 {
-  "name": "typescript-nodejs-project",
+  "name": "typetime-json-schema",
   "version": "0.0.0",
   "files": [
     "dist",
@@ -18,27 +18,28 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DetachHead/typescript-nodejs-project.git"
+    "url": "https://github.com/DetachHead/typetime-json-schema.git"
   },
   "devDependencies": {
+    "@detachhead/eslint-config": "^0.0.3",
     "@types/jest": "^27.0.2",
     "@types/node": "^14.14.20",
-    "@types/power-assert": "^1.5.3",
     "@typescript-eslint/eslint-plugin": "^4.13.0",
     "@typescript-eslint/parser": "^4.13.0",
-    "babel-preset-power-assert": "^3.0.0",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "espower-typescript": "^9.0.2",
     "jest": "^27.2.2",
-    "power-assert": "^1.6.1",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "source-map-support": "^0.5.19",
     "ts-jest": "^27.0.5",
     "typed-nodejs-assert": "^1.1.0",
     "typescript": "^4.4.0-beta"
+  },
+  "dependencies": {
+    "@detachhead/ts-helpers": "8.1.2-ed4eeb021944556e05bec24ff3e8da42032a01ca",
+    "@types/json-schema": "^7.0.9"
   }
 }
