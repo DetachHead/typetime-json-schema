@@ -22,6 +22,8 @@ type Foo = FromJsonSchema<{
         }
     }
 }>
-//type Foo is {foo: {asdf: string}, bar: string[]}
-const value: Foo = {}
+```
+this evaluates to the following type:
+```ts
+{foo: {asdf: string}, bar: string[]}
 ```
