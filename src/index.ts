@@ -1,7 +1,14 @@
-import { JSONSchema6, JSONSchema6TypeName } from 'json-schema'
+import { JSONSchema6 } from 'json-schema'
 import { TODO } from '@detachhead/ts-helpers/dist/utilityTypes/misc'
+import { CastArray } from '@detachhead/ts-helpers/dist/utilityTypes/Array'
+import { Head } from 'ts-toolbelt/out/List/Head'
+import { Tail } from 'ts-toolbelt/out/List/Tail'
 
-export type FromJsonSchema<T extends JSONSchema6> = T['type'] extends JSONSchema6TypeName
+type FromJsonSchemaArray<T extends JSONSchema6[]> = T['length'] extends 0
+    ? []
+    : [FromJsonSchema<Head<T>>, ...FromJsonSchemaArray<Tail<T>>]
+
+export type FromJsonSchema<T extends JSONSchema6> = T['type'] extends {}
     ? {
           string: string
           number: number
@@ -10,7 +17,12 @@ export type FromJsonSchema<T extends JSONSchema6> = T['type'] extends JSONSchema
           null: null
           array: T['items'] extends JSONSchema6
               ? FromJsonSchema<T['items']>[]
-              : TODO<'array type - why are arrays/booleans allowed here'>
+              : [
+                    ...(T['items'] extends JSONSchema6[]
+                        ? FromJsonSchemaArray<T['items']>
+                        : unknown[]),
+                    ...(T['additionalItems'] extends false ? [] : unknown[])
+                ]
           object: undefined extends T['properties']
               ? {}
               : {
@@ -19,5 +31,5 @@ export type FromJsonSchema<T extends JSONSchema6> = T['type'] extends JSONSchema
                         : TODO<'object type - why are arrays/booleans allowed here'>
                 }
           any: unknown // any? more like unknown
-      }[T['type']]
+      }[CastArray<T['type']>[number]]
     : TODO<'unknown type'>
