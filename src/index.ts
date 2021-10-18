@@ -1,8 +1,17 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7Type } from 'json-schema'
 import { TODO } from '@detachhead/ts-helpers/dist/utilityTypes/misc'
 import { CastArray } from '@detachhead/ts-helpers/dist/utilityTypes/Array'
+import {
+    Email,
+    Domain,
+    IPv4,
+    IPv6,
+    GUID,
+    UriString,
+} from '@detachhead/ts-helpers/dist/utilityTypes/String'
 import { Head } from 'ts-toolbelt/out/List/Head'
 import { Tail } from 'ts-toolbelt/out/List/Tail'
+import { FormattedDate } from '@detachhead/ts-helpers/dist/utilityTypes/Date'
 
 type FromJsonSchemaArray<T extends JSONSchema7[]> = T['length'] extends 0
     ? []
@@ -46,7 +55,26 @@ export type FromJsonSchema<T extends JSONSchema7Definition> = T extends JSONSche
     ? (T['type'] extends {}
           ? // @ts-expect-error https://github.com/microsoft/TypeScript/issues/46145
             {
-                string: string
+                string: T['format'] extends string
+                    ? // @ts-expect-error see issue linked above
+                      {
+                          'date-time': string // cant use FormattedDate, union type too complex to represent
+                          time: FormattedDate<'HH:mm+XXXXX'>
+                          date: FormattedDate<'yyyy-MM-dd'>
+                          // TODO: how does this standard differentiate between minute and month (both M) https://datatracker.ietf.org/doc/html/rfc3339#appendix-A
+                          duration: `P${number}${'S' | 'H' | 'D' | 'W' | 'M' | 'Y'}`
+                          email: Email
+                          'idn-email': Email
+                          hostname: Domain
+                          'idn-hostname': Domain
+                          ipv4: IPv4
+                          ipv6: IPv6
+                          uuid: GUID
+                          uri: UriString
+                          iri: UriString
+                          [key: string]: string
+                      }[T['format']]
+                    : string
                 number: number
                 integer: number
                 boolean: boolean
