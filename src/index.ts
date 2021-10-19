@@ -53,11 +53,9 @@ type FromJsonSchemaArray<T extends JSONSchema7[]> = T['length'] extends 0
  */
 export type FromJsonSchema<T extends JSONSchema7Definition> = T extends JSONSchema7
     ? (T['type'] extends {}
-          ? // @ts-expect-error https://github.com/microsoft/TypeScript/issues/46145
-            {
+          ? {
                 string: T['format'] extends string
-                    ? // @ts-expect-error see issue linked above
-                      {
+                    ? {
                           'date-time': string // cant use FormattedDate, union type too complex to represent
                           time: FormattedDate<'HH:mm+XXXXX'>
                           date: FormattedDate<'yyyy-MM-dd'>
@@ -73,26 +71,22 @@ export type FromJsonSchema<T extends JSONSchema7Definition> = T extends JSONSche
                           uri: UriString
                           iri: UriString
                           [key: string]: string
-                      }[T['format']]
+                      }[T['format'] & string] // need intersection to re-narrow due to https://github.com/microsoft/TypeScript/issues/45651
                     : string
                 number: number
                 integer: number
                 boolean: boolean
                 null: null
-                array: T['items'] extends JSONSchema7
-                    ? FromJsonSchema<
-                          // @ts-expect-error see issue linked above
-                          T['items']
-                      >[]
-                    : [
-                          ...(T['items'] extends JSONSchema7[]
-                              ? FromJsonSchemaArray<
-                                    // @ts-expect-error see issue linked above
-                                    T['items']
-                                >
-                              : unknown[]),
-                          ...(T['additionalItems'] extends false ? [] : unknown[])
-                      ]
+                array: T['items'] extends infer Narrowed
+                    ? Narrowed extends JSONSchema7
+                        ? FromJsonSchema<Narrowed>[]
+                        : [
+                              ...(Narrowed extends JSONSchema7[]
+                                  ? FromJsonSchemaArray<Narrowed>
+                                  : unknown[]),
+                              ...(T['additionalItems'] extends false ? [] : unknown[])
+                          ]
+                    : never
                 object: (undefined extends T['properties']
                     ? {}
                     : {
@@ -102,12 +96,17 @@ export type FromJsonSchema<T extends JSONSchema7Definition> = T extends JSONSche
                       }) &
                     (T['additionalProperties'] extends false ? {} : Record<string, unknown>)
                 any: unknown // any? more like unknown
-            }[CastArray<T['type']>[number]]
+            }[(CastArray<T['type']> extends infer Narrowed // need to re-narrow due to issue linked above
+                ? Narrowed extends {}
+                    ? Narrowed
+                    : never
+                : never)[number]]
           : unknown) &
-          (T['enum'] extends JSONSchema7Type[]
-              ? // @ts-expect-error see issue linked above
-                T['enum'][number]
-              : unknown)
+          (T['enum'] extends infer Narrowed // need to re-narrow due to issue linked above
+              ? Narrowed extends JSONSchema7Type[]
+                  ? Narrowed[number]
+                  : unknown
+              : never)
     : T extends true
     ? unknown
     : never
