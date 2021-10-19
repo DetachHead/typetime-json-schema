@@ -1,4 +1,5 @@
 import { exactly } from '@detachhead/ts-helpers/dist/utilityFunctions/misc'
+import { Email } from '@detachhead/ts-helpers/dist/utilityTypes/String'
 import { FromJsonSchema } from '../index'
 
 describe('boolean schemas', () => {
@@ -93,4 +94,8 @@ describe('enums', () => {
     test("enum types don't match type (never)", () => {
         exactly<never, FromJsonSchema<{ enum: ['foo', 'bar']; type: 'number' }>>()
     })
+})
+
+test('format', () => {
+    exactly<Email, FromJsonSchema<{ type: 'string'; format: 'email' }>>()
 })
